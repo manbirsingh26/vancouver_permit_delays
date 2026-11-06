@@ -1,0 +1,4 @@
+python version -- 3.14.3 or the latest python version
+IDE -- VS-Code
+Kernel Environment -- Python Global
+Extension Required -- ipykernel

@@ -1,0 +1,12 @@
+step,rows,cols,note
+Load raw data,52199,20,
+Drop duplicate rows / permit numbers,52199,20,removed 0
+"Parse dates, drop unparseable",52199,22,
+Remove negative processing days,52199,22,
+Build target on_time,52199,23,median = 85 days; on-time share = 0.502
+Project value: zero flag + log transform,52199,25,zero share = 0.152
+Fill missing category/area/use; contractor flag,52199,26,
+Group rare PropertyUse values,52199,28,21 levels kept
+Time features + coordinates,52199,32,
+Keep permits created 2017-2025,47438,32,removed pre-2017 and 2026
+Keep only required columns,47438,14,"dropped identifiers, text, geometry columns, IssueDate and other leakage columns; kept 14 columns"
