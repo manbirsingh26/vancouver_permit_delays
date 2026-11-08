@@ -42,9 +42,9 @@ The raw file is also stored in this repository. Download it from the link above 
 │   ├── 01_cleaning.ipynb        # cleaning + target construction
 │   ├── 02_main_analysis.ipynb   # EDA charts + 70/30 train/test split
 │   ├── 03_models.ipynb          # classification models + comparison
-│   └── 04_clustering.ipynb      # K-Means clustering (in progress)
+│   └── 04_clustering.ipynb      # K-Means clustering
 ├── data/
-│   ├── raw/                     # original download (not tracked)
+│   ├── raw/                     # original download
 │   ├── clean/                   # permits_clean.csv, cleaning_log.csv
 │   └── split/                   # train.csv, test.csv (70/30)
 ├── outputs/
