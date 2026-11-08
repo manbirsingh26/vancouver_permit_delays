@@ -86,9 +86,18 @@ Charts covering the target distribution, on-time rates by type of work, permit c
 | Gradient Boosting (`HistGradientBoostingClassifier`) | Randomized search (15 combinations) |
 
 ### 5. Clustering *(in progress)*
-K-Means on neighbourhood-level profiles (permit volume, type-of-work mix, project value, processing time), with a dendrogram, elbow chart and silhouette score to choose the number of clusters.
+K-Means (k = 3) on profiles of Vancouver's 22 neighbourhoods, using permit volume, share of alterations,
+median project value and on-time rate (standardised). k was chosen with a dendrogram, elbow chart and silhouette score.
 
----
+| Cluster | Neighbourhoods | Profile |
+|---|---|---|
+| Central / commercial | Downtown, Fairview, Kitsilano, Mount Pleasant, Strathcona, West End | 84% alterations, median 53 days, 69% on time |
+| Quieter residential | Arbutus Ridge, Grandview-Woodland, Kerrisdale, Killarney, Marpole, Oakridge, Shaughnessy, South Cambie, West Point Grey | More new buildings (29%), median 113 days, 41% on time |
+| Busy residential | Dunbar-Southlands, Hastings-Sunrise, Kensington-Cedar Cottage, Renfrew-Collingwood, Riley Park, Sunset, Victoria-Fraserview | Most new buildings (35%), highest volume, median 123 days, 37% on time |
+
+Neighbourhood differences in processing time mostly reflect the type of work done there, consistent with the classification results.
+
+![Neighbourhood clusters](outputs/figures/23_clusters_pca_map.png)
 
 ## Results
 
