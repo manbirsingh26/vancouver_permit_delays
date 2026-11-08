@@ -3,7 +3,7 @@
 A data analytics group project that predicts whether a City of Vancouver building permit will be **processed on time** or **delayed**, using only information known when the application is made.
 
 > Course: `Fundamentals of Data Analytics` · Douglas College · Fall 2026
-> Team: `Manbir Singh`, `<member 2>`, `<member 3>`, `<member 4>`
+> Team: `Manbir Singh`, `Ahmed Adib`, `Sachin Dogra`, `Abhilash Ravindranathan`
 
 ---
 
