@@ -42,7 +42,7 @@ The raw file is also stored in this repository. Download it from the link above 
 │   ├── 01_cleaning.ipynb        # cleaning + target construction
 │   ├── 02_main_analysis.ipynb   # EDA charts + 70/30 train/test split
 │   ├── 03_models.ipynb          # classification models + comparison
-│   └── 04_clustering.ipynb      # K-Means clustering
+│   └── 04_clustering.ipynb      # K-Means clustering of neighbourhoods
 ├── data/
 │   ├── raw/                     # original download
 │   ├── clean/                   # permits_clean.csv, cleaning_log.csv
@@ -85,7 +85,7 @@ Charts covering the target distribution, on-time rates by type of work, permit c
 | Random Forest | Randomized search (14 combinations) |
 | Gradient Boosting (`HistGradientBoostingClassifier`) | Randomized search (15 combinations) |
 
-### 5. Clustering *(in progress)*
+### 5. Clustering
 K-Means (k = 3) on profiles of Vancouver's 22 neighbourhoods, using permit volume, share of alterations,
 median project value and on-time rate (standardised). k was chosen with a dendrogram, elbow chart and silhouette score.
 
