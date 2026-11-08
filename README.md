@@ -29,7 +29,7 @@ This project uses issued building permits from the City of Vancouver Open Data P
 | After cleaning | 47,438 permits (created 2017–2025), 14 columns |
 | Class balance | 51.2% on time / 48.8% delayed |
 
-The raw file is not stored in this repository. Download it from the link above and place it in `data/raw/` as `issued-building-permits.xlsx`.
+The raw file is also stored in this repository. Download it from the link above to verify and you can place it in `data/raw/` as `issued-building-permits.xlsx`.
 
 ---
 
