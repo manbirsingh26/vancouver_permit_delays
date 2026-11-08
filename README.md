@@ -49,8 +49,8 @@ The raw file is also stored in this repository. Download it from the link above 
 │   └── split/                   # train.csv, test.csv (70/30)
 ├── outputs/
 │   └── figures/                 # all saved charts
-├── docs/
-│   └── decisions_log.md         # every modelling decision and its reason
+├── decisions_log.md             # every modelling decision and its reason
+│            
 └── slides/                      # presentation
 ```
 
