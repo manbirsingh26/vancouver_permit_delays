@@ -66,7 +66,7 @@ The raw file is also stored in this repository. Download it from the link above 
 - Filled missing categories with "Unknown", replaced the contractor name with a `has_contractor` flag, and grouped rare property uses into "Other".
 - **Removed leakage columns:** `IssueDate` combined with the application date reproduces the target exactly, so it was dropped along with other identifier and free-text columns.
 
-Every step and its row count is recorded in `data/clean/cleaning_log.csv`; the reasoning is in `docs/decisions_log.md`.
+Every step and its row count is recorded in `data/clean/cleaning_log.csv`; the reasoning is in `decisions_log.md`.
 
 ### 2. Exploratory data analysis
 Charts covering the target distribution, on-time rates by type of work, permit category, neighbourhood and property use, project value bands, contractor, year and month trends, a correlation heatmap and a map of permits.
