@@ -1,5 +1,7 @@
 # Decisions Log - Vancouver Building Permits Project
-Last updated: 2026-11-08
+
+Living document. Add a row whenever the group makes a choice that a grader could ask about.
+Last updated: 2026-11-12
 
 ## 1. Project scope
 
@@ -32,6 +34,71 @@ Last updated: 2026-11-08
 | 15 | Group `PropertyUse` into the top 20 values plus "Other". | 154 distinct values; the top 20 cover 98.6% of rows. |
 | 16 | Extract `created_year`, `created_month`, `lat`, `lon`; leave 348 missing coordinates as NaN. | Application timing is known at application time. Coordinates are used only for maps and clustering; `area` already captures location for the classifiers. |
 | 17 | No duplicates, negative values or unparseable dates were found. Zero-day permits (225) are kept. | Zero-day permits are plausible (same-day issue). |
+
+### 3.1 Columns added during cleaning (20 → 32)
+
+The raw file has 20 columns. Cleaning added 12 new columns before the final selection. Filling missing values changed existing columns in place and added nothing.
+
+| Step | New column(s) | Created from | What it holds | Total columns |
+|---|---|---|---|---|
+| Load raw file | – | – | Original 20 columns | 20 |
+| Parse dates | `created`, `issued` | `PermitNumberCreatedDate`, `IssueDate` | The two text dates converted to real dates | 22 |
+| Build target | `on_time` | `PermitElapsedDays` | 1 if issued within 85 days, else 0 | 23 |
+| Project value | `value_is_zero`, `log_value` | `ProjectValue` | Zero-value flag; log-transformed value (see 3.2) | 25 |
+| Contractor | `has_contractor` | `BuildingContractor` | 1 if a contractor is listed, else 0 | 26 |
+| Rare categories | `property_use`, `permit_category` | `PropertyUse`, `PermitCategory` | Top 20 property uses + "Other"; permit category after filling missing values | 28 |
+| Time and location | `created_year`, `created_month`, `lat`, `lon` | `created`, `geo_point_2d` | Year and month of application; latitude and longitude | 32 |
+| Filter 2017-2025 | – | – | Removes rows only (52,199 → 47,438) | 32 |
+| Final selection | – | – | Keeps 14 columns (see 3.3) | 14 |
+
+### 3.2 How `ProjectValue` was handled
+
+**The problem.** `ProjectValue` is the declared cost of the project. It is extremely skewed:
+
+| Statistic (full file) | Value |
+|---|---|
+| Median | $50,000 |
+| 75th percentile | $250,100 |
+| 99th percentile | about $11.5 million |
+| Maximum | about $1.47 billion |
+| Mean | about $800,000 (pulled up by a few huge projects) |
+| Share of permits with $0 | 15.2% (15.6% after the 2017-2025 filter) |
+
+**What we did and why**
+
+1. **Kept every row, including the very large values.** The big values are real projects (towers, large developments), not errors, and they carry signal: projects over $1 million are on time only about 19% of the time. Dropping or capping them would remove exactly the slow, complex projects the model needs to learn from.
+2. **Created `log_value = log(1 + ProjectValue)`.** The log squeezes the range from $0-$1.47 billion to roughly 0-21, so a few huge projects no longer dominate. This matters for logistic regression and for scaling. `log(1 + x)` is used instead of `log(x)` because `log(0)` is undefined, while `log(1 + 0) = 0`. Values were clipped at 0 first as a safety check (no negative values were found).
+3. **Added a `value_is_zero` flag.** A $0 value usually means no cost was declared (for example, some salvage, demolition or minor permits), not a genuinely cheap project. After the log transform, a $0 project gets `log_value = 0`, which would look like the cheapest project possible. The flag lets the model tell "no value declared" apart from "low value". Zero-value permits also behave differently: 67.3% on time vs 48.2% for the rest.
+4. **Kept the raw `project_value` column in the clean file**, renamed, but **not as a model feature**. It is used for the EDA value-band chart (readable dollar ranges) and for the median project value in the clustering profiles. The models use `log_value` and `value_is_zero` instead.
+
+### 3.3 Final 14 columns and why the other 18 were removed (32 → 14)
+
+**Kept (14):**
+
+| Column | Role |
+|---|---|
+| `type_of_work`, `property_use`, `area`, `permit_category` | Categorical model features (`type_of_work` and `area` are renamed from `TypeOfWork` and `GeoLocalArea`) |
+| `log_value`, `value_is_zero`, `has_contractor`, `created_year`, `created_month` | Numeric model features |
+| `project_value` | Raw value, for EDA and clustering only |
+| `lat`, `lon` | Coordinates, for maps and clustering only |
+| `elapsed_days` | Processing days (renamed from `PermitElapsedDays`), for EDA and clustering only; it defines the target |
+| `on_time` | Target |
+
+**Removed (18):**
+
+| Removed column(s) | Reason |
+|---|---|
+| `IssueDate`, `issued` | **Target leakage.** Issue date minus application date gives the processing time exactly (verified match = 1.0), so the model would know the answer. The issue date is also unknown at application time. |
+| `IssueYear`, `YearMonth` | **Target leakage.** Both are parts of the issue date. |
+| `PermitNumber` | Identifier. Its prefix (BP/DB/BU) also hints at the type of work, which could leak information in an unintended way. |
+| `PermitNumberCreatedDate`, `created` | Already converted into `created_year` and `created_month`; the full date adds nothing for the models. |
+| `PropertyUse` | Replaced by `property_use` (154 values grouped into top 20 + "Other"). |
+| `PermitCategory` | Replaced by `permit_category` (same values, missing filled with "Unknown"). |
+| `BuildingContractor` | Replaced by `has_contractor`. The names are 38% missing and have thousands of unique values, so they cannot be used directly. |
+| `Address`, `Applicant`, `ApplicantAddress`, `BuildingContractorAddress` | Identifiers with thousands of unique values (and personal or business details). They describe who or where, not what kind of project, so they don't generalise to new permits. Location is already captured by `area`, `lat` and `lon`. |
+| `ProjectDescription` | Free text with no fixed format. It often states the type of work outright (overlapping with `type_of_work`), and using it properly would need text processing, which is outside the scope of this project. |
+| `SpecificUseCategory` | A more detailed version of the property use with many rare values; `property_use` already covers this information. |
+| `Geom`, `geo_point_2d` | Location stored as text. Latitude and longitude were extracted into `lat` and `lon` first, so the originals are duplicates. |
 
 ## 4. Modelling setup
 
