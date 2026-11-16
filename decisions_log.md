@@ -1,11 +1,5 @@
 # Decisions Log - Vancouver Building Permits Project
 
-Living document. Add a row whenever the group makes a choice that a grader could ask about.
-Last updated: 2026-11-12
-
-Living document. Add a row whenever the group makes a choice that a grader could ask about.
-Last updated: 2026-11-12
-
 ## 1. Project scope
 
 | # | Decision | Reason |
